@@ -1,0 +1,168 @@
+﻿一、创建Git仓库
+	1、git init--->初始化仓库,声明自己要建立一个git仓库
+	2、查看--> ls -ah
+	3、把文件添加到Git中
+		git add 文件
+		例如：git add test.txt
+	4、提交文件到git
+		git commit -m "添加描述的内容"
+		注意：-m 是对添加文件的描述
+	5、可以多次添加文件再提交
+		例如：git add test01.txt
+			 git add test02.txt
+			git commit -m "我多次提交"
+
+二、深入学习
+	1、git status指令
+
+		i、git status--可以查看当前仓库的状态
+			比如、当前处于哪个分支上、被修改的文件
+
+		ii、git diff--查看被改动的内容，也可这样使用：git diff 文件名
+
+		iii、git log--查看历史使用git的记录，也可使用：git log --pretty=online
+
+		v、返回操作.通过git log 查看对应的commit号的前6位，来锁定要返回上一步的操作（一般是有很多个commit所以要求前6位）
+		a、在git中，HEAD值当前版本，HEAD^指上一个版本，HEAD^^上上一个版本，HEAD~100指前一百个操作
+
+		b、使用：git reset --hard HEAD^
+
+		c、在恢复完上一个操作后，又想恢复当前
+			可以通过git reflog查看（用git reflog查看命令历史，以便确定要回到未来的哪个版本。）
+
+	2、git的内部结构
+		i、stage（暂存区）和master（第一主分支），而HEADS是指向master的
+		ii、git add 和 git commit
+			a、使用git add是把文件添加到stage中
+			b、git commit 是把文件添加到master中(git为我们创建的一个分支)
+			c、git将文件分成三个阶段 
+				- working directory -->工作区
+				- stage -->暂存区
+				- repository
+			1.若该文件不再repository内(stage)：git rm --cached filename 
+			2.若该文件已经在repository内：git reset head filename
+
+
+		iii、工作区的撤销指令--> git checkout -- file
+			例如:git checkout -- test01.txt
+
+三、远程上传仓库
+	1、生成SSH key
+		由于本地 Git 仓库和 GitHub 仓库之间的传输是通过SSH加密的，所以我们需要配置验证信息：
+		使用以下命令生成 SSH Key：$ ssh-keygen -t rsa -C "youremail@example.com"
+		例如：$ ssh-keygen -t rsa -C "1579502649@qq.com"
+		课外：后面的 your_email@youremail.com 改为你在 Github 上注册的邮箱，之后会要求确认路径和输入密码，我们这使用默认的一路回车就行。成功的话会在 ~/(C盘里的用户目录) 下生成 .ssh 文件夹，进去，打开 id_rsa.pub，复制里面的 key。
+		回到 github 上，进入 Account => Settings（账户配置）。
+		具体看：百度或者w3school
+
+	2、创建reository
+		i、填入仓库名称，根据自己的情况选择是否公开还是私人化。点击Create repository
+		ii、之后会显示遗传代码，根据自己的情况在Git中填写
+		iii、上传完成，在github的左边可以看到自己上传的东西
+
+	3、从github下载(克隆项目代码)
+		i、如果要一个人要上传代码到另一个的仓库中，则另一个人需要那个人SSH key，也就是要添加他的SSH key
+		ii、代码：$ git clone git@github.com:用户名/仓库名.git
+			例如：$ git clone git@github.com:michaelliao/gitskills.git
+
+	4、远程修改
+		方法1：
+		克隆修改后，
+		i、git add 文件
+		ii、git commit -m ""
+		iii、$ git remote add orgin （地址）git@github.com:HuilLin/gitskills.git
+		注意：fatal: remote origin already exists.
+		解决：git remote rm origin
+		v、$ git push -u origin master
+		更新成功
+
+		方法2：先删后加
+		git remote rm orgin -->先删除
+		git remote add origin 仓库地址 -->链接到远程git仓库
+		git push -u origin master -->提交修改
+
+		方法3：修改命令
+		git remote set-url origin 仓库地址
+		git push -u origin master -->提交
+
+	5、远程分支获取最新的版本到本地
+	
+	i、 git pull-->即可更新
+	6、GitHub 私人private仓库添加成员（协作者Collaborators）
+		i、到私人Repositories，点击setting，再选择Collaborators
+		ii、那里现实可以绑定3个人的帐号或邮箱！！
+
+	7、GitHub如何删除项目库Repositories
+		i、选择进入要删除的Repositories
+		ii、点击setting，拉到最下面，到“Danger Zone”，选择Delete this repository按钮
+		iii、输入他提示的仓库名即可删除
+		V、可参考https://blog.csdn.net/luoyayun361/article/details/82878079
+
+	8、Git -- 如何删除本地仓库
+		i、找到有“.git”目录，打开Git
+		ii、输入 rm -rf .git即可完成
+
+	9、Git--public多人合作修改
+		i、进入仓库、点击setting，再选择Collaborators
+		ii、输入协作者帐号或邮箱，然后会生成一个邀请链接，发给被邀请人即可完成修改权限
+
+四、分支管理(代码合并)
+	
+	1、条件：在master分支上提交了文件（先add后再commit）
+	2、创建副分支
+		i、git checkout -b dev(创建dev分支并进入dev分支)
+		ii、git branch（可查看分支情况，一般在master上提交后能看到master分支）
+		iii、在dev分支修改master上已提交的文件（比如，test.txt）并add和commit
+	3、内容合并a(本地仓库分支的合并)
+		i、此次合并是在master没有相同行（相同数据位置上）合并的，也就是master少dev多，合并就是把dev的内地加到master上
+		ii、先切换到master分支，然后使用语句：git merge dev(git merge是合并指定分支到当前分支)
+		iii、删除分支，git branch -d dev
+	4、内容合并b(远程仓库和本地仓库的合并)
+		i、针对问题：the following files would be overwritten by merge
+		ii、解决方法
+			a、服务器代码合并本地代码
+				$ git stash     //暂存当前正在进行的工作。
+				$ git pull   origin master //拉取服务器的代码
+				$ git stash pop //合并暂存的代码
+
+			b、服务器代码覆盖本地代码
+				$git reset --hard  //回滚到上一个版本
+				$git pull origin master 
+			c、本地master与其他分支相同位置内容的合并(比如,master的第三行是"OK",而其他分支修改相同文档，第三行是"NO")
+				1、在3内容中,有其他分支切换到master时，使用git merge 其他分支名字，会出现错误：
+				Auto-merging readme.txt
+				CONFLICT (content): Merge conflict in readme.txt
+				Automatic merge failed; fix conflicts and then commit the result.
+				2、使用git status会提示错误:
+					On branch master
+					Your branch is ahead of 'origin/master' by 2 commits.
+					  (use "git push" to publish your local commits)
+
+					You have unmerged paths.
+					  (fix conflicts and run "git commit")
+					  (use "git merge --abort" to abort the merge)
+
+					Unmerged paths:
+					  (use "git add <file>..." to mark resolution)
+
+						both modified:   readme.txt
+
+					no changes added to commit (use "git add" and/or "git commit -a")
+				3、查看冲突的文件
+					vi 文件名--->:
+					<<<<<<< HEAD
+					Creating a new branch is quick & simple.(当前分支的内容)
+					=======
+					Creating a new branch is quick AND simple.(其他分支,且是相同位置的不同内容)
+					>>>>>>> feature1
+				4、删除掉"<<<<<<< HEAD"--"======="--">>>>>>> feature1",即可把相同位置不同内容的数据完整放在同一个文档，完成代码合并功能！！！
+				5、最后删除分支: git branch -d 分支名
+
+
+
+
+
+
+
+
+
